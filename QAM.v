@@ -2,8 +2,8 @@ module QAM(
 	input conv_S,
 	input clk,
 	input reset,
-	output reg signed [2:0] I,
-	output reg signed [2:0] Q
+	output reg signed [3:0] I,
+	output reg signed [3:0] Q
 	);
 
 reg sample_clk1;
@@ -24,17 +24,17 @@ always@(posedge clk or negedge reset) begin
 		if (~count) begin
 			case(digit)
 				2'b00: begin
-					I <= -3'd3;
-					Q <= 3'd3; end
+					I <= -4'd4;
+					Q <= 4'd4; end
 				2'b01: begin
-					I <= 3'd3;
-					Q <= 3'd3; end
+					I <= 4'd4;
+					Q <= 4'd4; end
 				2'b11: begin
-					I <= 3'd3;
-					Q <= -3'd3; end
+					I <= 4'd4;
+					Q <= -4'd4; end
 				2'b10: begin
-					I <= -3'd3; 
-					Q <= -3'd3; end
+					I <= -4'd4; 
+					Q <= -4'd4; end
 			endcase
 			sample_clk1 <= ~sample_clk1;
 			sample_clk0 <= 0;

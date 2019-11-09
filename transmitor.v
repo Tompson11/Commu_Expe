@@ -1,14 +1,21 @@
 module transmitor(
+	input IsTransmit,
+	input has_error,
 	input sys_clk,
 	input reset,
-	output signed [2:0] I,
-	output signed [2:0] Q
+	output signed [3:0] channel_outI,
+	output signed [3:0] channel_outQ
 );
 
 wire clk_1, clk_2;
+wire [3:0] I,Q;
+wire [3:0] I_out,Q_out;
 wire m_out;
 wire [1:0] conv_out;
 wire conv_S;
+
+assign channel_outI = I_out & {4{IsTransmit}};
+assign channel_outQ = Q_out & {4{IsTransmit}};
 
 ClkGen Cg(
     .sys_clk	(	sys_clk	),
@@ -44,6 +51,15 @@ QAM QAM(
 	.I(I),
 	.Q(Q)
 	);
-	
+
+Channel channel(
+	.clk(clk_1),
+	.reset(reset),
+	.has_error(has_error),
+	.I_in(I),
+	.Q_in(Q),
+	.I_out(I_out),
+	.Q_out(Q_out)
+	);
 
 endmodule
