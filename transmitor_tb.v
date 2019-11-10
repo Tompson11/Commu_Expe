@@ -1,10 +1,8 @@
 `timescale 1ns/1ps
 
 module transmitor_tb;
-reg sys_clk,reset;
-wire out;
-wire signed [3:0] channel_outI;
-wire signed [3:0] channel_outQ;
+reg sys_clk,reset,init_tab;
+wire [8:0] channel_out;
 wire IsTransmit;
 wire has_error;
 
@@ -13,17 +11,21 @@ assign has_error = 1;
 
 transmitor trans(.sys_clk(sys_clk),
 					  .reset(reset),
+					  .init_tab(init_tab),
 					  .has_error(has_error),
 					  .IsTransmit(IsTransmit),
-					  .channel_outI(channel_outI),
-					  .channel_outQ(channel_outQ)
+					  .channel_out(channel_out)
 					  );
 
 initial begin
     sys_clk = 0;
 	 reset = 1;
+	 init_tab =0;
+	 #1 init_tab = 1;
+	 #1 init_tab = 0;
 	 #1 reset=0;
 	 #1 reset=1;
+	 
 end
 
 always #5 sys_clk <= ~sys_clk;

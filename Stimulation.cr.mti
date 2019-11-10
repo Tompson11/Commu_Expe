@@ -1,9 +1,9 @@
-{E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v}
+{E:/communication expe/WholeSystem/Commu_Expe/transmitor.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/transmitor.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module M_sequence_gen_tb
+-- Compiling module transmitor
 
 Top level modules:
-	M_sequence_gen_tb
+	transmitor
 
 } {} {}} {E:/communication expe/WholeSystem/Commu_Expe/QAM.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/QAM.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
@@ -12,19 +12,19 @@ Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 Top level modules:
 	QAM
 
-} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/transmitor.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/transmitor.v}
+} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module transmitor
+-- Compiling module M_sequence_gen_tb
 
 Top level modules:
-	transmitor
+	M_sequence_gen_tb
 
-} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/ClkGen.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/ClkGen.v}
+} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/transmitor_tb.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/transmitor_tb.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module ClkGen
+-- Compiling module transmitor_tb
 
 Top level modules:
-	ClkGen
+	transmitor_tb
 
 } {} {}} {E:/communication expe/WholeSystem/Commu_Expe/conv_code.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/conv_code.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
@@ -40,19 +40,12 @@ Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 Top level modules:
 	P_to_S
 
-} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/transmitor_tb.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/transmitor_tb.v}
+} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/ClkGen.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/ClkGen.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module transmitor_tb
+-- Compiling module ClkGen
 
 Top level modules:
-	transmitor_tb
-
-} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/Channel.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/Channel.v}
-Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module Channel
-
-Top level modules:
-	Channel
+	ClkGen
 
 } {} {}} {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
