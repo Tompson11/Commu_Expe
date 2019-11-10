@@ -47,6 +47,13 @@ Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 Top level modules:
 	transmitor_tb
 
+} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/Channel.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/Channel.v}
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module Channel
+
+Top level modules:
+	Channel
+
 } {} {}} {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 -- Compiling module M_sequence_gen
