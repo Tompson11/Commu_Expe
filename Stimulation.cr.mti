@@ -1,4 +1,11 @@
-{E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v}
+{E:/communication expe/WholeSystem/Commu_Expe/QAM.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/QAM.v}
+Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
+-- Compiling module QAM
+
+Top level modules:
+	QAM
+
+} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen_tb.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 -- Compiling module M_sequence_gen_tb
 
@@ -53,13 +60,6 @@ Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 
 Top level modules:
 	Channel
-
-} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/Demodulation.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/Demodulation.v}
-Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module Demodulation
-
-Top level modules:
-	Demodulation
 
 } {} {}} {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/M_sequence_gen.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012

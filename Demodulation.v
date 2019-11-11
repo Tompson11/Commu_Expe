@@ -12,6 +12,8 @@ reg [19:0] sum_I;
 reg [19:0] sum_Q;
 reg head_detectd;
 reg [1:0] sample_count;
+
+reg [4:0] symbol_count;
 	
 always@(posedge clk or negedge reset) begin
 	if(!reset) begin
@@ -20,6 +22,7 @@ always@(posedge clk or negedge reset) begin
 		recev_read <= 7'd0;
 		head_detectd <= 1'b0;
 		sample_count <= 2'b00;
+		symbol_count <= 5'd0;
 	end
 	else begin
 		if(!head_detectd) begin
@@ -27,13 +30,14 @@ always@(posedge clk or negedge reset) begin
 				head_detectd <= 1'b1;
 				recev_read <= 7'd1;
 				sample_count <= 2'b00;
+				symbol_count <= 5'd0;
 				sum_I <= 20'd0;
 				sum_Q <= 20'd100 * {{11{channel_out[8]}},channel_out};
 			end
 		end
 		else begin
 			if(sample_count==2'b11) begin
-				if(recev_read == 7'd32) begin
+				if(recev_read == 7'd32) begin //Starting time of a symbol
 					case({sum_I[19],sum_Q[19]})
 						2'b00 : demodulation_out <= 2'b01;
 						2'b01 : demodulation_out <= 2'b11;
@@ -43,6 +47,10 @@ always@(posedge clk or negedge reset) begin
 					recev_read <= 7'd1;
 					sum_I <= 20'd0;
 					sum_Q <= 20'd100 * {{11{channel_out[8]}},channel_out};
+					
+					if(symbol_count == 5'd31) head_detectd<=1'b0; //Start to detect a new frame if the current frame is over
+					
+					symbol_count <= symbol_count + 5'd1;
 				end
 				else begin 
 					sum_I <= sum_I + {{11{channel_out[8]}},channel_out} * {{11{GetSin[8]}},GetSin};
