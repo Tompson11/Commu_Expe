@@ -2,7 +2,7 @@
 
 module transmitor_tb;
 reg sys_clk,reset,init_tab;
-wire [8:0] channel_out;
+wire [1:0] demodulation_out;
 wire IsTransmit;
 wire has_error;
 
@@ -14,7 +14,7 @@ transmitor trans(.sys_clk(sys_clk),
 					  .init_tab(init_tab),
 					  .has_error(has_error),
 					  .IsTransmit(IsTransmit),
-					  .channel_out(channel_out)
+					  .demodulation_out(demodulation_out)
 					  );
 
 initial begin

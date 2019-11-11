@@ -20,12 +20,18 @@ always@(posedge clk or negedge reset) begin
 		noise_count <= 2'b00;
 		rest <= 1'b0;
 		rest_count <= 4'b0;
+		channel_out <= 9'd0;
 		end
 	else begin
 		if (noise_count == 2'b11) begin
 			if(IsTransmit && !rest) channel_out <= channel_in + noise;
 			else channel_out <= noise;
 		end
+		else begin
+			if(IsTransmit && !rest) channel_out <= channel_in;
+			else channel_out <= 9'd0;
+		end
+			
 		
 		noise_count <= noise_count + 2'd1;
 		
