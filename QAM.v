@@ -32,11 +32,13 @@ always@(posedge clk or negedge reset) begin
 					2'b00,2'b01:modulation_out <= GetCos;
 					2'b10,2'b11:modulation_out <= -GetCos;
 				endcase
+				/*
 				if(symbol_count == 6'd31) begin  //Have a rest if having sent 32 symbols
 					rest <= 1'b1;
 					symbol_count <= 6'd0;
 				end
 				else symbol_count <= symbol_count + 6'd1;
+				*/
 			end
 			else begin // if resting
 				modulation_out <= 9'd0;

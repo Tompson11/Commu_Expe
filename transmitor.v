@@ -4,7 +4,8 @@ module transmitor(
 	input sys_clk,
 	input reset,
 	input init_tab,
-	output [1:0] demodulation_out
+	output decoder_out,
+	output m_out2
 );
 
 wire clk_1, clk_2, clk_4, clk_32, clk_128;
@@ -15,8 +16,8 @@ wire [8:0] modulation_out;
 wire [8:0] channel_out;
 wire [6:0] trans_read,recev_read;
 wire [8:0] trans_sin,trans_cos,recev_sin,recev_cos;
+wire [1:0] demodulation_out;
 
-assign has_error = 1;
 
 ClkGen Cg(
     .sys_clk	(	sys_clk	),
@@ -31,6 +32,7 @@ ClkGen Cg(
  M_sequence_gen M(
 	.clk(clk_128),
 	.m_out(m_out),
+	.m_out2(m_out2),
 	.reset(reset)
 	);
 
@@ -78,5 +80,12 @@ Demodulation demodulation(
 	.demodulation_out(demodulation_out),
 	.recev_read(recev_read)
 );
-	
+
+inv_conv decoder(
+	.clk(~clk_128),
+	.reset(reset),
+	.inv_QAM_out(demodulation_out),
+	.inv_conv_out(decoder_out)
+);
+
 endmodule

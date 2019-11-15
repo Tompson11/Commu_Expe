@@ -5,6 +5,7 @@ reg sys_clk,reset,init_tab;
 wire [1:0] demodulation_out;
 wire IsTransmit;
 wire has_error;
+wire decoder_out;
 
 assign IsTransmit = 1;
 assign has_error = 1;
@@ -14,7 +15,7 @@ transmitor trans(.sys_clk(sys_clk),
 					  .init_tab(init_tab),
 					  .has_error(has_error),
 					  .IsTransmit(IsTransmit),
-					  .demodulation_out(demodulation_out)
+					  .decoder_out(decoder_out)
 					  );
 
 initial begin
