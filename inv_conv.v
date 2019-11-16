@@ -16,6 +16,7 @@ reg [63:0] count2;
 reg [30:0] inv_conv_out1,inv_conv_out2;
 reg m;
 
+
 always@(posedge clk or negedge reset) begin
 if (~reset) begin
 count2 <= 0;
@@ -33,8 +34,9 @@ else begin
 m <= 0;
 end
 end
-	
-always@(posedge clk or negedge reset) begin
+
+
+always@(posedge clk or posedge trigger_decode) begin
 	if (~reset) begin
 		conv_path1 <= 0;
 		conv_path2 <= 0;

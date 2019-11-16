@@ -68,11 +68,11 @@ Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
 Top level modules:
 	ClkGen
 
-} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/QAM.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/QAM.v}
+} {} {}} {E:/communication expe/WholeSystem/Commu_Expe/inv_conv.v} {1 {vlog -work work -vopt {E:/communication expe/WholeSystem/Commu_Expe/inv_conv.v}
 Model Technology ModelSim SE vlog 10.1a Compiler 2012.02 Feb 22 2012
--- Compiling module QAM
+-- Compiling module inv_conv
 
 Top level modules:
-	QAM
+	inv_conv
 
 } {} {}}

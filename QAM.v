@@ -20,7 +20,7 @@ always@(posedge clk or negedge reset) begin
 		trans_read <= 7'd0;
 		current_conv <= 2'd0;
 		modulation_out <= 9'd0;
-		symbol_count <= -6'd1;
+		symbol_count <= -6'd2;
 		rest <= 1'b0;
 		rest_count <= 5'd0;
 	end
