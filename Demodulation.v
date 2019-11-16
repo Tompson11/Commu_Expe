@@ -4,6 +4,7 @@ module Demodulation(
 	input [8:0] GetSin,
 	input [8:0] GetCos,
 	input [8:0] channel_out,
+	input [3:0] BER,
 	output reg [1:0] demodulation_out,
 	output reg [6:0] recev_read,
 	output reg trigger_decode
@@ -14,7 +15,10 @@ reg [19:0] sum_Q;
 reg [1:0] sample_count;
 
 reg [4:0] symbol_count;
+reg [3:0] error_count;
+
 reg head_detected;
+
 	
 always@(posedge clk or negedge reset) begin
 	if(!reset) begin
@@ -25,6 +29,7 @@ always@(posedge clk or negedge reset) begin
 		head_detected <= 1'b0;
 		sample_count <= 2'b00;
 		symbol_count <= 5'd0;
+		error_count <= 4'd1;
 	end
 	else begin
 		if(!head_detected) begin
@@ -41,12 +46,27 @@ always@(posedge clk or negedge reset) begin
 			if(sample_count==2'b11) begin
 				if(recev_read == 7'd32) begin //Starting time of a symbol
 					trigger_decode <= 1'b1;
-					case({sum_I[19],sum_Q[19]})
-						2'b00 : demodulation_out <= 2'b01;
-						2'b01 : demodulation_out <= 2'b11;
-						2'b10 : demodulation_out <= 2'b00;
-						2'b11 : demodulation_out <= 2'b10;
-					endcase
+					
+					if(BER == 4'd0 || error_count != BER) begin//if no bit error or current demodulation result is free of error
+						case({sum_I[19],sum_Q[19]})
+							2'b00 : demodulation_out <= 2'b01;
+							2'b01 : demodulation_out <= 2'b11;
+							2'b10 : demodulation_out <= 2'b00;
+							2'b11 : demodulation_out <= 2'b10;
+						endcase
+						error_count <= error_count + 4'd1;
+					end
+					else begin // generate a bit error
+						case({sum_I[19],sum_Q[19]})
+							2'b00 : demodulation_out <= 2'b11;
+							2'b01 : demodulation_out <= 2'b01;
+							2'b10 : demodulation_out <= 2'b10;
+							2'b11 : demodulation_out <= 2'b00;
+						endcase
+						error_count <= 4'd1;
+					end
+						
+					
 					recev_read <= 7'd1;
 					sum_I <= 20'd0;
 					sum_Q <= 20'd100 * {{11{channel_out[8]}},channel_out};

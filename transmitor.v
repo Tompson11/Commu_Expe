@@ -1,6 +1,6 @@
 module transmitor(
 	input IsTransmit,
-	input has_error,
+	input [3:0] BER,
 	input sys_clk,
 	input reset,
 	input init_tab,
@@ -75,6 +75,7 @@ Channel channel(
 Demodulation demodulation(
 	.clk(clk_1),
 	.reset(reset),
+	.BER(BER),
 	.GetSin(recev_sin),
 	.GetCos(recev_cos),
 	.channel_out(channel_out),
