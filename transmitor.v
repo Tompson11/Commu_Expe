@@ -17,6 +17,7 @@ wire [8:0] channel_out;
 wire [6:0] trans_read,recev_read;
 wire [8:0] trans_sin,trans_cos,recev_sin,recev_cos;
 wire [1:0] demodulation_out;
+wire trigger_decode;
 
 
 ClkGen Cg(
@@ -78,12 +79,14 @@ Demodulation demodulation(
 	.GetCos(recev_cos),
 	.channel_out(channel_out),
 	.demodulation_out(demodulation_out),
-	.recev_read(recev_read)
+	.recev_read(recev_read),
+	.trigger_decode(trigger_decode)
 );
 
 inv_conv decoder(
 	.clk(~clk_128),
 	.reset(reset),
+	.trigger_decode(trigger_decode),
 	.inv_QAM_out(demodulation_out),
 	.inv_conv_out(decoder_out)
 );

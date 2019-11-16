@@ -1,6 +1,7 @@
 module inv_conv(
 	input clk,
 	input reset,
+	input trigger_decode,
 	input [1:0] inv_QAM_out,
 	output reg inv_conv_out
 	);
@@ -13,6 +14,7 @@ reg [3:0] i;
 reg [1:0] j,k;
 reg [63:0] count2;
 reg [30:0] inv_conv_out1,inv_conv_out2;
+reg m;
 
 always@(posedge clk or negedge reset) begin
 if (~reset) begin
@@ -20,6 +22,15 @@ count2 <= 0;
 end
 else begin
 count2 <=count2+1;
+end
+end
+
+always@(posedge clk or negedge reset) begin
+if(trigger_decode==1) begin
+m <= 1;
+end
+else begin
+m <= 0;
 end
 end
 	
@@ -44,7 +55,8 @@ always@(posedge clk or negedge reset) begin
 		j <= 0;
 	end
 	else begin
-   if(count2>=5) begin	
+   if(m) begin	
+		inv_conv_out <= inv_conv_out2[30-count];
 		if(offset[4]<offset[5]) begin
 			offset[0] <= offset[4];
 			conv_path1[2*count+1 -:2] <= 2'b00;
@@ -92,40 +104,38 @@ always@(posedge clk or negedge reset) begin
 			4'b1111: inv_conv_out1[count] <= 1;
 		endcase
 		
-		inv_conv_out <= inv_conv_out2[30-count];
-		
 		if(count==0) begin
 		
-		offset[0]=0;
-		offset[1]=512;
-		offset[2]=512;
-		offset[3]=512;
+		offset[0] <= 0;
+		offset[1] <= 512;
+		offset[2] <= 512;
+		offset[3] <= 512;
 		
-			j=0;
+			j <= 0;
 			if(offset[0]>offset[1]) begin
-				j=1;
+				j <= 1;
 				if(offset[1]>offset[2]) begin
-					j=2;
+					j <= 2;
 					if(offset[2]>offset[3]) begin
-						j=3;
+						j <= 3;
 					end
 				end
 				else begin
 					if(offset[1]>offset[3]) begin
-						j=3;
+						j <= 3;
 					end
 				end
 			end
 			else begin
 				if(offset[0]>offset[2]) begin
-					j=2;
+					j <= 2;
 					if(offset[2]>offset[3]) begin
-						j=3;
+						j <= 3;
 					end
 				end
 				else begin
 					if(offset[0]>offset[3]) begin
-						j=3;
+						j <= 3;
 					end
 				end
 			end
@@ -163,7 +173,7 @@ offset[4]=0;
 		end
 end
 else begin
-if(count2>=3) begin
+if(m) begin
 if(count==0) begin
 offset[4]=0;
 		offset[8]=0;
