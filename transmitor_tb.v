@@ -8,7 +8,7 @@ wire [3:0] BER;
 wire decoder_out;
 
 assign IsTransmit = 1;
-assign BER = 4'b0010;
+assign BER = 4'b0000;
 
 transmitor trans(.sys_clk(sys_clk),
 					  .reset(reset),
