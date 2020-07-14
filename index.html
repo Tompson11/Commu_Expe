@@ -1,172 +1,554 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <script src="./lib/art_template.js"></script>
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .MathInput {
+            height: 40px;
+            font-size: 36px;
+            margin-bottom: 5px;
+            width: 65px;
+            font-family: "MathJax_Math-italic";
+            text-align: center;
+            border-style: dashed;
+        }
+
+        .MatrixLine {
+            font-size: 36px;
+            padding: 15px;
+            border-left: black solid 7px;
+            border-right: black solid 7px;
+        }
+
+        .Matrix-Container {
+            position: relative;
+        }
+
+        .MaTrixTop::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: auto;
+            right: auto;
+            height: 7px;
+            width: 30px;
+            background-color: black;
+        }
+
+        .MaTrixTop::after {
+            content: '';
+            position: absolute;
+            left: auto;
+            top: 0;
+            bottom: auto;
+            right: 0;
+            height: 7px;
+            width: 30px;
+            background-color: black;
+        }
+
+        .MatrixButtom::after {
+            content: '';
+            position: absolute;
+            left: auto;
+            top: auto;
+            bottom: 0;
+            right: 0;
+            height: 7px;
+            width: 30px;
+            background-color: black;
+        }
+
+        .MatrixButtom::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: auto;
+            bottom: 0;
+            right: auto;
+            height: 7px;
+            width: 30px;
+            background-color: black;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r118/three.js"></script>
+
+    <script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+    <!-- <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script> -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/jquery.webui-popover/1.2.1/jquery.webui-popover.min.css">
+    <script src="https://cdn.jsdelivr.net/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/jquery.webui-popover/1.2.1/jquery.webui-popover.min.js"></script>
+
+
+    <script>
+
+        var MatrixId = ["#R11", "#R12", "#R13",
+            "#R21", "#R22", "#R23",
+            "#R31", "#R32", "#R33"];
+        var QuatId = ["#qw", "#qx", "#qy", "#qz"];
+        var EulerId = ["#Ex", "#Ey", "#Ez"];
+        var LieId = ["#Lx", "#Ly", "#Lz"];
+
+        var Pos = new THREE.Vector3();
+        var Scale = new THREE.Vector3();
+
+        var RotMat = new THREE.Matrix4();
+        var RotQ = new THREE.Quaternion();
+        var EulerAng = new THREE.Euler();
+        var so3 = new THREE.Vector3();
+
+        $(document).ready(function () {
+            $(".MathInput").focusout(function () {
+                var _this = $(this);
+
+                if (_this.val().length == 0) {
+                    _this.css("border-width", "2px");
+                    _this.css("border-style", "dashed");
+                }
+                else {
+
+                    let calculate = true;
+                    let updateflag = [true, true, true, true];
+
+                    if (_this.hasClass("MatrixInput")) {
+
+                        updateflag[0] = false;
+
+
+                        for (let i = 0; i < 3; i++) {
+                            for (let j = 0; j < 3; j++) {
+                                let cur_input = $(MatrixId[i * 3 + j]).get(0);
+
+                                if (isNaN(cur_input.valueAsNumber)) {
+                                    calculate = false;
+                                    break;
+                                }
+                                else {
+                                    RotMat.elements[i * 4 + j] = cur_input.valueAsNumber;
+                                }
+                            }
+                        }
+
+                        if (calculate) {
+
+                            var RotMat_Copy = RotMat.clone();
+                            var RotMat_T = RotMat.clone();
+                            RotMat_T.transpose();
+
+                            RotMat_Copy.multiply(RotMat_T);
+                            RotMat_Copy.decompose(Pos, RotQ, Scale);
+
+                            if (Math.abs(1 - Scale.x) < 0.001 &&
+                                Math.abs(1 - Scale.y) < 0.001 &&
+                                Math.abs(1 - Scale.z) < 0.001) {
+                                RotQ.setFromRotationMatrix(RotMat);
+                            }
+                            else {
+                                calculate = false;
+                            }
+
+
+                        }
+                    }
+                    else if (_this.hasClass("QuarInput")) {
+                        updateflag[1] = false;
+
+                        for (let i = 0; i < 4; i++) {
+                            let cur_input = $(QuatId[i]).get(0);
+
+                            if (isNaN(cur_input.valueAsNumber)) {
+                                calculate = false;
+                                break;
+                            }
+                            else {
+                                RotQ[QuatId[i][2]] = cur_input.valueAsNumber;
+                            }
+                        }
+                    }
+                    else if (_this.hasClass("EulerInput")) {
+
+                        updateflag[2] = false;
+
+                        for (let i = 0; i < 3; i++) {
+                            let cur_input = $(EulerId[i]).get(0);
+
+                            if (isNaN(cur_input.valueAsNumber)) {
+                                calculate = false;
+                                break;
+                            }
+                            else {
+                                EulerAng[EulerId[i][2]] = cur_input.valueAsNumber;
+                            }
+                        }
+
+                        RotQ.setFromEuler(EulerAng);
+                    }
+                    else if (_this.hasClass("LieInput")) {
+
+                        updateflag[3] = false;
+
+                        for (let i = 0; i < 3; i++) {
+                            let cur_input = $(LieId[i]).get(0);
+
+                            if (isNaN(cur_input.valueAsNumber)) {
+                                calculate = false;
+                                break;
+                            }
+                            else {
+                                so3[LieId[i][2]] = cur_input.valueAsNumber;
+                            }
+                        }
+
+                        RotQ.w = Math.cos(so3.length() / 2);
+                        let s = Math.sin(so3.length() / 2);
+                        so3.normalize();
+
+                        RotQ.x = s * so3.x;
+                        RotQ.y = s * so3.y;
+                        RotQ.z = s * so3.z;
+
+                    }
+
+                    if (calculate) {
+
+                        RotQ.normalize();
+                        RotMat.makeRotationFromQuaternion(RotQ);
+                        EulerAng.setFromQuaternion(RotQ);
+
+                        if (updateflag[1]) {
+                            for (let i = 0; i < 4; i++) {
+                                let self = $(QuatId[i]).get(0);
+                                self.value = RotQ[QuatId[i][2]].toFixed(10);
+                                SetInputWidth(self);
+                            }
+                        }
+
+                        if (updateflag[2]) {
+                            for (let i = 0; i < 3; i++) {
+                                let self = $(EulerId[i]).get(0);
+                                self.value = EulerAng[EulerId[i][2]].toFixed(10);
+                                SetInputWidth(self);
+                            }
+                        }
+
+                        if (updateflag[3]) {
+                            for (let i = 0; i < 3; i++) {
+                                let self = $(LieId[i]).get(0);
+                                let theta = 2 * Math.acos(RotQ.w);
+                                console.log(theta);
+                                let s = theta / Math.sqrt(RotQ.x * RotQ.x + RotQ.y * RotQ.y + RotQ.z * RotQ.z);
+
+                                self.value = (RotQ[LieId[i][2]] * s).toFixed(10);
+                                SetInputWidth(self);
+                            }
+                        }
+
+                    }
+
+                    // let val = eval(_this.val());
+
+                    // if (_this.hasClass("MatrixInput") && (val > 1 || val < -1)) {
+                    //     _this.css("border-color", "red");
+                    //     _this.webuiPopover({
+                    //         trigger: 'manual',
+                    //         content: "元素必须在-1~1內",
+                    //         multi: true,
+                    //         placement: "bottom",
+                    //         padding: false
+                    //     });
+                    //     _this.webuiPopover('show');
+                    // }
+                    // else {
+                    //     _this.css("border-width", "0px");
+                    //     _this.webuiPopover('hide');
+                    // }
+                }
+            })
+
+            $(".MatrixInput").keydown(function (event) {
+
+                if (event.which == 38 || event.which == 40) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                else if (event.which == 37) {
+                    var el = $(this).get(0);
+                    // var pos = 0;
+                    // if ('selectionStart' in el) {
+                    //     pos = el.selectionStart;
+                    // } else if ('selection' in document) {
+                    //     el.focus();
+                    //     var Sel = document.selection.createRange();
+                    //     var SelLength = document.selection.createRange().text.length;
+                    //     Sel.moveStart('character', -el.value.length);
+                    //     pos = Sel.text.length - SelLength;
+                    // }
+                    // console.log(pos);
+
+                }
+            })
+
+        })
+
+        function MatrixInputHandler(self, event) {
+
+            if (isNaN(self.valueAsNumber) && event.inputType != "deleteContentBackward") {
+                self.value = "";
+                self.style.width = "65px"
+                return;
+            }
+
+            SetInputWidth(self);
+        }
+
+        function SetInputWidth(self) {
+            var InputSize = computeFontSize(self.value, "36px", "MathJax_Math-italic");
+            var width_per_char = eval(InputSize.width) * 1.0 / self.value.length;
+            self.style.width = InputSize.width + 2 * width_per_char;
+        }
+
+
+    </script>
+
+    <script>
+        function computeFontSize(str, size, family) {
+            let spanDom = document.createElement("span");
+            spanDom.style.fontSize = size;
+            spanDom.style.opacity = "0";
+            spanDom.style.fontFamily = family;
+            spanDom.innerHTML = str;
+            document.body.append(spanDom);
+            let sizeD = {};
+            sizeD.width = spanDom.offsetWidth;
+            sizeD.height = spanDom.offsetHeight;
+            spanDom.remove();
+            return sizeD;
+        }
+    </script>
+
 </head>
+
 <body>
-  <table>
-    <tr>
-      <td>
-        <label for="name">用户名</label>
-      </td>
-      <td>
-        <input type="text" name="name" id="name">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="phone">电话</label>
-      </td>
-      <td>
-        <input type="text" name="phone" id="phone">
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <label for="address">地址</label>
-      </td>
-      <td>
-        <input type="text" name="address" id="address">
-      </td>
-    </tr>
-  </table>
-  <input type="button" value="添加用户" id="btnAdd" onclick="addPerson()">
-  <table>
-    <thead>
-      <tr>
-        <th>id</th>
-        <th>name</th>
-        <th>address</th>
-        <th>phone</th>
-        <th>编辑</th>
-      </tr>
-    </thead>
-    <tbody id="tbd">
-    </tbody>
-  </table>
-  <script id="tbTmpl" type="text/html">
-    <tr>
-      <td>{{id}}</td>
-      <td>{{name}}</td>
-      <td>{{phone}}</td>
-      <td>{{address}}</td>
-      <td><a href="#">修改</a>
-      <a href="#" onclick="delById({{id}})">删除</a></td>
-    </tr>
-  </script>
-  <script>
-    var db, dbName = 'demoDb', dbVersion = 1, personStore = 'person';
-    // 创建indexedDB对象，兼容各种浏览器
-    var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-    if (!indexedDB) {
-      console.log("你的浏览器不支持IndexedDB");
-    }
 
-    openIndexedDB(loadTableData);
+    <script>
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
-    // 配合游标遍历表中数据，并配合art-template生成html
-    function loadTableData() {
-      document.getElementById('tbd').innerHTML = "";
-      var trans = db.transaction(personStore, 'readwrite');
-      var store = trans.objectStore(personStore);
-      var cursorRequest = store.openCursor();
-      cursorRequest.onsuccess = function (e) {
-        var cursor = e.target.result;
-        if (cursor) {
-          var html = template('tbTmpl', cursor.value);
-          document.getElementById('tbd').innerHTML += html;
-          cursor.continue(); // 游标继续往下 搜索，重复触发 onsuccess方法，如果到到返回null
-        }
-      }
-    }
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth / 2, window.innerHeight / 2);
+        document.body.appendChild(renderer.domElement);
 
-    function delById(id) {
-      if (!db || !id) {
-        return;
-      }
-      // 创建一个事务
-      var transaction = db.transaction(personStore, 'readwrite');
+        var geometry = new THREE.BoxGeometry();
+        var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
 
-      // 通过事务来获取store
-      var store = transaction.objectStore(personStore);
+        camera.position.z = 5;
 
-      // 删除请求
-      var delPersonRequest = store.delete(id);
-      delPersonRequest.onsuccess = function (e) {
-        loadTableData(); // 删除成功后，重新加载数据
-      }
-      delPersonRequest.onerror = function (e) {
-        console.log(e.target.error);
-      }
-    }
+        var animate = function () {
+            requestAnimationFrame(animate);
 
-    // 添加用户
-    function addPerson() {
-      if (!db) {
-        return;
-      }
-      var pName = document.getElementById('name').value;
-      var pPhone = document.getElementById('phone').value;
-      var pAddress = document.getElementById('address').value;
-      // 创建一个事务
-      var transaction = db.transaction(personStore, 'readwrite');
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
 
-      // 通过事务来获取store
-      var store = transaction.objectStore(personStore);
+            renderer.render(scene, camera);
+        };
 
-      var addPersonRequest = store.add({ name: pName, phone: pPhone, address: pAddress });
-      addPersonRequest.onsuccess = function (e) {
-        console.log(e.target);
-        loadTableData(); // 添加成功后重新加载数据
-      }
-      addPersonRequest.onerror = function (e) {
-        console.log(e.target.error);
-      }
-    }
+        animate();
+    </script>
 
-    // 打开数据库
-    function openIndexedDB(callback) {
-      // 打开一个数据库
-      var request = indexedDB.open(dbName, dbVersion);
+    <div>
+        <h1>旋转矩阵</h1>
 
-      // 打开失败
-      request.onerror = function (e) {
-        console.log(e.currentTarget.error.message);
-      };
+        <div>
+            <div style="float: left;">
+                <div style="padding: 90px 0px;font-size: 50px;">
+                    `R=`
+                </div>
+            </div>
 
-      // 打开成功！
-      request.onsuccess = function (e) {
-        db = e.target.result;
-        console.log('成功打开DB');
-        callback();
-      };
+            <div style="display: inline-block; ">
 
-      // 打开成功后，如果版本有变化自动执行以下事件
-      request.onupgradeneeded = function (e) {
-        var db = e.target.result;
-        if (!db.objectStoreNames.contains(personStore)) {
-          console.log("我需要创建一个新的存储对象");
-          //如果表格不存在，创建一个新的表格（keyPath，主键 ； autoIncrement,是否自增），会返回一个对象（objectStore）
-          var objectStore = db.createObjectStore(personStore, {
-            keyPath: "id",
-            autoIncrement: true
-          });
+                <div class="Matrix-Container">
+                    <div class="MatrixTop MatrixLine">
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R11" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R12" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R13" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                    </div>
+                </div>
 
-          //指定可以被索引的字段，unique字段是否唯一, 指定索引可以加快搜索效率。
-          objectStore.createIndex("name", "name", {
-            unique: true
-          });
-          objectStore.createIndex("phone", "phone", {
-            unique: false
-          });
-        }
-        console.log('数据库版本更改为： ' + dbVersion);
-      };
-    }
-  </script>
+                <div class="Matrix-Container">
+                    <div class="MatrixLine">
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R21" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R22" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R23" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="Matrix-Container">
+                    <div class="MatrixButtom MatrixLine">
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R31" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R32" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                        <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                                class="MathInput MatrixInput" id="R33" oninput="MatrixInputHandler(this,event)">
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h1> 四元数 </h1>
+        <div style="float: left;">
+            <div style="padding: 30px 0px;font-size: 50px;">
+                `q=`
+            </div>
+        </div>
+
+        <div style="display: inline-block" class="Matrix-Container">
+            <div class="MatrixTop MatrixLine">
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput QuarInput" id="qw" oninput="MatrixInputHandler(this,event)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput QuarInput" id="qx" oninput="MatrixInputHandler(this,event)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput QuarInput" id="qy" oninput="MatrixInputHandler(this,event)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput QuarInput" id="qz" oninput="MatrixInputHandler(this,event)">
+                </div>
+            </div>
+
+            <div class="Matrix-Container">
+                <div class="MatrixTop MatrixLine" style="border-width: 0px;">
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `w`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `x`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `y`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `z`
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <div>
+        <h1> 欧拉角 </h1>
+        <div style="float: left;">
+            <div style="padding: 30px 0px;font-size: 50px;">
+                `\theta =`
+            </div>
+        </div>
+
+        <div style="display: inline-block" class="Matrix-Container">
+            <div class="MatrixTop MatrixLine">
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput EulerInput" id="Ex" oninput="MatrixInputHandler(this,event)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput EulerInput" id="Ey" oninput="MatrixInputHandler(this)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput EulerInput" id="Ez" oninput="MatrixInputHandler(this)">
+                </div>
+            </div>
+
+            <div class="Matrix-Container">
+                <div class="MatrixTop MatrixLine" style="border-width: 0px;">
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `roll`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `p``itch`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `yaw`
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h1> 李代数 </h1>
+        <div style="float: left;">
+            <div style="padding: 30px 0px;font-size: 50px;">
+                `\phi =`
+            </div>
+        </div>
+
+        <div style="display: inline-block" class="Matrix-Container">
+            <div class="MatrixTop MatrixLine">
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput LieInput" id="Lx" oninput="MatrixInputHandler(this,event)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput LieInput" id="Ly" oninput="MatrixInputHandler(this)">
+                </div>
+                <div style="width: 250px;display: inline-block;text-align: center;"> <input type="number"
+                        class="MathInput LieInput" id="Lz" oninput="MatrixInputHandler(this)">
+                </div>
+            </div>
+
+            <div class="Matrix-Container">
+                <div class="MatrixTop MatrixLine" style="border-width: 0px;">
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `x`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `y`
+                    </div>
+                    <div style="width: 250px;display: inline-block;text-align: center;"> `z`
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
+
+
+
 </html>
